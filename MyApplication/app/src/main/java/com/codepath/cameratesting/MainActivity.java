@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int IMAGE_OR_CAMERA_REQUEST_CODE = 2;
 
     private Uri outputFileUri;
+    File photoFile;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (requestCode == IMAGE_OR_CAMERA_REQUEST_CODE) {
-            boolean exists = new File(outputFileUri.getPath()).exists();
+            boolean exists = photoFile.exists();//new File(outputFileUri.getPath()).exists();
             Log.d("jenda", "outputFileUri exists " + exists);
             Toast.makeText(this, "Image exists " + exists, Toast.LENGTH_LONG).show();
 
@@ -105,14 +107,18 @@ public class MainActivity extends AppCompatActivity {
 
         final File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 
-        File file = new File(root, "share_image_" + System.currentTimeMillis() + ".jpeg");
+        photoFile = new File(root, "share_image_" + System.currentTimeMillis() + ".jpeg");
 
 
-        if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+        if (!photoFile.getParentFile().exists() && !photoFile.getParentFile().mkdirs()) {
             Toast.makeText(this, "failed to created dirs. ", Toast.LENGTH_LONG).show();
             return;
         }
-        outputFileUri = FileProvider.getUriForFile(this, "com.codepath.cameratesting", file);
+        outputFileUri = FileProvider.getUriForFile(this, "com.codepath.cameratesting", photoFile);
+
+        Log.d("jenda", " outputFileUri.getPath() " +  outputFileUri.getPath());
+        Log.d("jenda", " file.getAbsolutePath() " +  photoFile.getAbsolutePath());
+
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
         // set the image file name
